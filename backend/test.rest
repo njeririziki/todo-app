@@ -1,1 +1,22 @@
-GET http://localhost:3000/todos
+GET http://localhost:1337/todos
+
+
+###
+#create a new todo
+POST http://localhost:1337/todos
+Content-Type: application/json
+
+{
+  "title": "new todo",
+  "description": "new todo description",
+  "status": "new",
+   "deadline": "2022-12-12T00:00:00.000Z",
+}
+
+
+###
+POST http://localhost:1337/users
+Content-Type: application/json
+{
+  "email": "testuser@gmail.com"
+}
