@@ -24,7 +24,7 @@ app.use('*', async (req, res) => {
 })
 
 ;(async () => {
-    app.listen(+(process.env.PORT ?? 5000), () => {
+    app.listen(+(process.env.PORT ?? 1337), () => {
         console.log(`Server running on port ${process.env.PORT}`);
     })
 })();

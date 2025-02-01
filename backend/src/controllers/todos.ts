@@ -18,7 +18,8 @@ class TodoController {
 
     static async createTodo(req: Request, res: Response) {
         try {
-            const newTodo = await prisma.todo.create(req.body);
+            const newTodo = await prisma.todo.create({
+                data: req.body});
             res.status(201).json(newTodo);
         } catch (error: any) {
             res.status(500).json({ message: error.message });
