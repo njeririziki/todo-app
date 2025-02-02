@@ -1,27 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect, useRef } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import axios from 'axios';
+import apiInstance from '../utils/ApiInstance';
+
 
 interface CreateTodoItemProps {
     status: string;
+    close: () => void;
 }
 
-const createTodo = async (newTodo: { title: string; description: string; deadline: string,status :string }) => {
+const createTodo = async (newTodo: { title: string; description: string; deadline: string,status :string, ownerId:number }) => {
      
-    const response = await axios.post(`${process.env.REACT_APP_API_URL_LOCAL}/todos`, newTodo);
+    const response = await apiInstance.post(`/todos`, newTodo);
     return response.data;
 };
 
 
 
-const CreateTodoItem: React.FC<CreateTodoItemProps>= ({status}) => {
+const CreateTodoItem: React.FC<CreateTodoItemProps>= ({status,close}) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [deadline, setDeadline] = useState('');
+    const [deadline, setDeadline] = useState(new Date());
+
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+                close();
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [close]);
 
    const queryClient = useQueryClient();
 
-   const mutation = useMutation<void, unknown, { title: string; description: string; deadline: string; status: string }>({
+   const mutation = useMutation<void, unknown, { title: string; description: string; deadline: string; status: string, ownerId:number }>({
         mutationFn: createTodo,
         onSuccess: () => {
             queryClient.invalidateQueries('todos');
@@ -30,10 +47,13 @@ const CreateTodoItem: React.FC<CreateTodoItemProps>= ({status}) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        mutation.mutate({ title, description, deadline, status });
+        const ownerId = 1//decode the token  for this
+        mutation.mutate({ title, description, deadline: deadline.toISOString(), status, ownerId });
+        close();
     };
 
     return (
+        <div  ref={wrapperRef}>
         <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 bg-white shadow-md rounded-lg">
             <div className="mb-4">
                 <label htmlFor="title" className="block text-gray-600 text-sm  mb-2">Title</label>
@@ -59,9 +79,11 @@ const CreateTodoItem: React.FC<CreateTodoItemProps>= ({status}) => {
                 <input
                     type="date"
                     id="deadline"
-                    value={deadline}
-                    onChange={(e) => setDeadline(e.target.value)}
+                    // placeholder='dd-mm-yyyy'
+                    value={deadline.toDateString()}
+                    onChange={(e) => setDeadline(new Date(e.target.value))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    pattern="\d{4}-\d{2}-\d{2}"
                 />
             </div>
            
@@ -69,6 +91,7 @@ const CreateTodoItem: React.FC<CreateTodoItemProps>= ({status}) => {
                 Save
             </button>
         </form>
+        </div>
     );
 };
 
