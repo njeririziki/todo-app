@@ -19,7 +19,12 @@ const fetchTodos = async () => {
 };
 
 const TodoPage: React.FC = () => {
-    const { data: todos, error, isLoading } = useQuery<{ id: number; title: string; completed: boolean }[], Error>('todos', fetchTodos);
+    const { data: todos, error, isLoading } = useQuery<{  
+          id: number; 
+          title: string; 
+          description: string,
+          deadline:Date,
+          status:string }[], Error>('todos', fetchTodos);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error fetching todos: {error?.message}</div>;
@@ -31,7 +36,7 @@ const TodoPage: React.FC = () => {
            
             <div  className="flex flex-row gap-12"> 
                 { ['todo', 'in progress', 'completed'].map(status => (
-                <StatusSection key={status} title={status} todos={todos.filter(todo => todo.status === status)} />
+                <StatusSection key={status} title={status} todos={todos?.filter(todo => todo.status === status) || []} />
 
             ))}
             <div></div>
