@@ -1,15 +1,21 @@
 import React from 'react';
 import { useQuery } from 'react-query';
-import TodoItem from '../components/TodoItem';
+import StatusSection from '../components/StatusSection';
 // import { useAuth0 } from '@auth0/auth0-react';
+//import dotenv from 'dotenv'
+import axios from 'axios';
+
+
 
 
 const fetchTodos = async () => {
-    const response = await fetch('/api/todos');
-    if (!response.ok) {
+    const response = await axios.get(`${process.env.REACT_APP_API_URL_LOCAL}/todos`);
+
+    if (response.status !== 200) {
         throw new Error('Network response was not ok');
     }
-    return response.json();
+    console.log({fetchTodos: response});   
+    return response?.data;
 };
 
 const TodoPage: React.FC = () => {
@@ -20,12 +26,16 @@ const TodoPage: React.FC = () => {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Todo List</h1>
-            <ul>
-                {todos && todos.map((todo: { id: number; title: string; completed: boolean }) => (
-                    <TodoItem key={todo.id} todo={todo} onToggle={() => {}} onDelete={() => {}} />
-                ))}
-            </ul>
+            
+            <h3 className="text-xl font-bold mb-4 ">My Tasks</h3>
+           
+            <div  className="flex flex-row gap-12"> 
+                { ['todo', 'in progress', 'completed'].map(status => (
+                <StatusSection key={status} title={status} todos={todos.filter(todo => todo.status === status)} />
+
+            ))}
+            <div></div>
+            </div>
         </div>
     );
 };

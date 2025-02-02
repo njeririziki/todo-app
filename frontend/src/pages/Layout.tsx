@@ -1,5 +1,7 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import LandingPage from './LandingPage';
+
 
 /**
  * LayoutPage component that handles user authentication and displays content accordingly.
@@ -30,24 +32,20 @@ const LayoutPage: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
-       {isAuthenticated ? (
-        <div>
+    <div className="min-h-screen min-w-screen flex flex-col ">
+     <div className='p-4 self-end' >
+       {isAuthenticated ? (        
         <button onClick={handleLogout}>Logout</button>
-        {/* Todo list and functionality will go here */}
-        </div>
-      ) : (
-        <div>
-        <h2></h2>
+       
+      ) : (       
         <button onClick={handleLogin}>Login</button>
-        </div>
+        
       )}
-      <div>
-        {children}
       </div>
-      {/* <div className="text-center">
-      <h1>Get your Tasks Organized</h1>    
-      </div> */}
+      <div className='h-full flex items-center justify-center'>
+        {isAuthenticated ? children : <LandingPage />}
+      </div>
+      
     </div>
   );
 };
