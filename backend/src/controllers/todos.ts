@@ -7,9 +7,18 @@ class TodoController {
    
 
     static async getTodo(req: Request, res: Response) {
- 
         try {
-            const todos = await prisma.todo.findMany();
+            const search = req.query.search as string;
+            const todos = search
+                ? await prisma.todo.findMany({
+                    where: {
+                        OR: [
+                            { title: { contains: search, mode: 'insensitive' } },
+                            { description: { contains: search, mode: 'insensitive' } }
+                        ]
+                    }
+                })
+                : await prisma.todo.findMany();
             res.status(200).json(todos);
         } catch (error: any) {
             res.status(500).json({ message: error.message });
