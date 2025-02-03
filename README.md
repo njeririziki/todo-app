@@ -1,4 +1,5 @@
-# Todo App
+# Todo App 
+You can find the deployed app here https://todo.cofinder.info/
 
 This is a full-stack Todo App, built with React, TypeScript, Node.js, and Prisma.
 
@@ -70,7 +71,7 @@ Before you begin, ensure you have met the following requirements:
 
 To run the tests for  frontend  use the following commands:
 
-### Fronten Tests
+### Frontent Tests
 ```sh
 cd frontend
 npm test
