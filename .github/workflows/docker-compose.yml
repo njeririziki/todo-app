@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: spinup todo
-      run: docker-compose up
+      run: sudo docker-compose up
