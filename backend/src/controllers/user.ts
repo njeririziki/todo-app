@@ -20,9 +20,9 @@ class UserController {
                     
                 }
             });
-           const token = jwt.sign({ email: authtoken.email }, process.env.JWT_SECRET as string, { expiresIn: '3h' });
-            
-            
+      
+           const token = jwt.sign({ authtoken }, process.env.JWT_SECRET as string, { expiresIn: '3h' });
+              
             res.status(201).json({ token });
         } catch (error) {
             console.log(error);
