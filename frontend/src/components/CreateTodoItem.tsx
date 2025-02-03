@@ -9,7 +9,7 @@ interface CreateTodoItemProps {
     close: () => void;
 }
 
-const createTodo = async (newTodo: { title: string; description: string; deadline: string,status :string, ownerId:number }) => {
+const createTodo = async (newTodo: { title: string; description: string; deadline: Date, status: string, ownerId: number }) => {
      
     const response = await apiInstance.post(`/todos`, newTodo);
     return response.data;
@@ -20,7 +20,7 @@ const createTodo = async (newTodo: { title: string; description: string; deadlin
 const CreateTodoItem: React.FC<CreateTodoItemProps>= ({status,close}) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [deadline, setDeadline] = useState(new Date());
+    const [deadline, setDeadline] = useState('');
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -37,9 +37,14 @@ const CreateTodoItem: React.FC<CreateTodoItemProps>= ({status,close}) => {
         };
     }, [close]);
 
+    useEffect(() => {
+        const today = new Date().toISOString().split('T')[0];
+        setDeadline(today);
+      }, []);
+
    const queryClient = useQueryClient();
 
-   const mutation = useMutation<void, unknown, { title: string; description: string; deadline: string; status: string, ownerId:number }>({
+   const mutation = useMutation<void, unknown, { title: string; description: string; deadline: Date; status: string, ownerId:number }>({
         mutationFn: createTodo,
         onSuccess: () => {
             queryClient.invalidateQueries('todos');
@@ -51,7 +56,7 @@ const CreateTodoItem: React.FC<CreateTodoItemProps>= ({status,close}) => {
         const token = sessionStorage.getItem('token') as string;
         const decodedToken: { id: number } = jwtDecode(token);
 
-        mutation.mutate({ title, description, deadline: deadline.toISOString(), status, ownerId: decodedToken.id });
+        mutation.mutate({ title, description, deadline: new Date(deadline), status, ownerId: decodedToken.id });
         close();
     };
 
@@ -82,10 +87,10 @@ const CreateTodoItem: React.FC<CreateTodoItemProps>= ({status,close}) => {
                 <input
                     type="date"
                     id="deadline"
-                    value={deadline.toDateString()}
-                    onChange={(e) => setDeadline(new Date(e.target.value))}
+                    value={deadline}
+                    onChange={(e) => setDeadline(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    pattern="\d{4}-\d{2}-\d{2}"
+                   // pattern="\d{4}-\d{2}-\d{2}"
                 />
             </div>
            

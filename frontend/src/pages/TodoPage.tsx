@@ -9,7 +9,7 @@ const fetchTodos = async ({ searching }: {  searching: string }) => {
     if (response.status !== 200) {
         throw new Error('Network response was not ok');
     }
-    console.log({fetchTodos: response});   
+   
     return response?.data;
 };
 
