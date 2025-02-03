@@ -15,7 +15,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ setSearch }) => {
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
         if (event.target.value.length > 2) {
-            console.log('Search term is ', event.target.value);
+           
             setSearch(event.target.value);
         }
     };
@@ -31,7 +31,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ setSearch }) => {
                 onChange={handleInputChange}
                 onBlur={() => {
                     if (searchTerm === '') {
-                        console.log('Input has been cleared');
+                       
                         setSearch(searchTerm);
                     }
                 }}
