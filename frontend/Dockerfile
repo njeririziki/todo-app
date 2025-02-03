@@ -10,7 +10,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy the built frontend files from the build step to Nginx's default directory
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist/ /usr/share/nginx/html
 
 # Expose port 80 (default for Nginx)
 EXPOSE 80
