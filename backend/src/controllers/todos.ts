@@ -6,21 +6,14 @@ const prisma = new PrismaClient();
 class TodoController {
   static async getTodo(req: Request, res: Response) {
     try {
-      const token = req.header("x-access-token")?.toString().trim();
-      if (!token) {
-        throw new Error("Unauthorized");
-      }
-      const decodedToken = jwt.verify(
-        token,
-        process.env.JWT_SECRET as string
-      ) as unknown as { id: number };
-      const { id } = decodedToken;
+      
 
       const search = req.query.search as string;
       const todos = search
         ? await prisma.todo.findMany({
             where: {
-              ownerId: Number(id),
+              // @ts-ignore
+              ownerId: req.user.id,
               AND: [
                 {
                   OR: [
@@ -32,7 +25,8 @@ class TodoController {
             },
           })
         : await prisma.todo.findMany({
-            where: { ownerId: Number(id) },
+          // @ts-ignore
+            where: { ownerId: req.user.id, },
           });
 
       res.status(200).json(todos);

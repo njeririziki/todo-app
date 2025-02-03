@@ -3,7 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import LandingPage from "./LandingPage";
 import TodoPage from "./TodoPage";
 import SearchComponent from "../components/SearchComponent";
-import apiInstance from "../utils/ApiInstance";
+import axios from "axios";
 import { useMutation } from "react-query";
 
 /**
@@ -24,7 +24,7 @@ import { useMutation } from "react-query";
  * If the user is not authenticated, it displays a login button.
  */
 const createUser = async (newUser: { username: string }) => {
-  const response = await apiInstance.post(`/users`, newUser);
+  const response = await axios.post(`${import.meta.env.VITE_API_URL_LOCAL}/users`, newUser);
   return response.data;
 };
 
