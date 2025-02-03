@@ -1,3 +1,0 @@
--- init.sql
-CREATE ROLE prisma WITH LOGIN PASSWORD 'prisma';
-GRANT ALL PRIVILEGES ON DATABASE postgres TO prisma;

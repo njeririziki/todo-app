@@ -2,11 +2,13 @@
 
 services:
   # PostgreSQL service for Prisma
-  postgres:
+  postgres_db:
     image: postgres:15
+    hostname: postgres_db
+    container_name: postgres_db
     restart: always
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=postgress
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=prisma
     ports:
@@ -20,7 +22,7 @@ services:
       retries: 20
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Mount the init.sql script
+    
     command: postgres -c listen_addresses='*'
     logging:
       options:
@@ -33,12 +35,14 @@ services:
       context: ./backend
       dockerfile: Dockerfile 
     restart: always
-    environment:
-      - DATABASE_URL=postgresql://prisma:prisma@postgres:5432/postgres
+ 
     ports:
       - "1337:1337"  # Expose backend port
     depends_on:
-      - postgres
+       postgres_db:
+        condition: service_healthy
+    env_file:
+      - .env.prod
     networks:
       - app-network
     volumes:
@@ -52,7 +56,7 @@ services:
       dockerfile: Dockerfile  # Use the production Dockerfile to build the app and serve with Nginx
     restart: always
     ports:
-      - "3000:3000"  # Expose frontend on port 80 (Nginx default)
+      - "3000:80"  # Expose frontend on port 80 (Nginx default)
     depends_on:
       - backend
     networks:

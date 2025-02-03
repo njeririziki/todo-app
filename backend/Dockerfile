@@ -1,31 +1,38 @@
-# Use Node 20 image
+# Use Node 20 image as a build stage
 FROM node:20 AS build
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if available)
-COPY package*.json ./
+# Copy package files
+COPY package.json package-lock.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy all backend files
+# Install Prisma CLI globally
+RUN npm install -g prisma
+
+# Copy backend files
 COPY . .
 
 # Generate Prisma Client
 RUN npx prisma generate
 
-# Run Prisma migration
-RUN npx prisma migrate dev --name init
-
+# Build application
 RUN npm run build
 
-# Expose port (the backend service will run on this port)
+# Final production image
+FROM node:20 AS production
+
+WORKDIR /app
+
+# Copy only necessary files from build stage
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/package.json ./
+
+# Expose application port
 EXPOSE 1337
 
-# Command to start the backend server
-CMD ["npm", "run", "start"]
-
-
-
+# Run Prisma migrations at runtime
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run start"]
