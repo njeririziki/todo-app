@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import jwt from 'jsonwebtoken';
 const prisma = new PrismaClient();
 
 class TodoController {
@@ -7,19 +8,37 @@ class TodoController {
    
 
     static async getTodo(req: Request, res: Response) {
+       
         try {
+            const token = req.header('x-access-token')?.toString().trim();
+            if (!token) {
+                throw new Error('Unauthorized');
+            }
+            const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as unknown as { id: number };
+            const { id } = decodedToken;
+
             const search = req.query.search as string;
             const todos = search
                 ? await prisma.todo.findMany({
                     where: {
-                        OR: [
-                            { title: { contains: search, mode: 'insensitive' } },
-                            { description: { contains: search, mode: 'insensitive' } }
+                        ownerId: Number(id),
+                        AND: [
+                            {
+                                OR: [
+                                    { title: { contains: search, mode: 'insensitive' } },
+                                    { description: { contains: search, mode: 'insensitive' } }
+                                ]
+                            }
                         ]
                     }
                 })
-                : await prisma.todo.findMany();
-            res.status(200).json(todos);
+                : await prisma.todo.findMany({
+                    where: { ownerId: Number(id) }
+                });
+
+                console.log({todos});
+                
+             res.status(200).json(todos);
         } catch (error: any) {
             res.status(500).json({ message: error.message });
         }
