@@ -17,7 +17,7 @@ COPY . .
 RUN npx prisma generate
 
 # Run Prisma migration
-#RUN npx prisma migrate dev --name init
+RUN npx prisma migrate dev --name init
 
 RUN npm run build
 

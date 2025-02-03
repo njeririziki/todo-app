@@ -52,7 +52,7 @@ services:
       dockerfile: Dockerfile  # Use the production Dockerfile to build the app and serve with Nginx
     restart: always
     ports:
-      - "80:80"  # Expose frontend on port 80 (Nginx default)
+      - "3000:3000"  # Expose frontend on port 80 (Nginx default)
     depends_on:
       - backend
     networks:
