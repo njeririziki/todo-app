@@ -1,4 +1,4 @@
-import React,{ useState } from 'react';
+import React,{ useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import LandingPage from './LandingPage';
 import TodoPage from './TodoPage';
@@ -32,7 +32,7 @@ const createUser = async (newUser: { username: string}) => {
 const LayoutPage: React.FC = () => {
 
   const [filterTerm, setFilterTerm] = useState('')
- const { user, isAuthenticated, logout } = useAuth0();
+ const { user, isAuthenticated,loginWithPopup, logout } = useAuth0();
 
  const mutation = useMutation(createUser, {
         onSuccess: (data: { authToken: string }) => {
@@ -42,11 +42,20 @@ const LayoutPage: React.FC = () => {
             sessionStorage.setItem('token', data.authToken);
         },
     });
-  const handleLogin = () => {
     
-    if (user && user.email) {
-      mutation.mutate({ username: user.email });
-    }
+    useEffect(() => {
+      if (isAuthenticated && user && user.email) {
+          console.log({user});
+        
+          mutation.mutate({ username: user.email });
+          sessionStorage.setItem('username', user.name || '');
+          sessionStorage.setItem('Avatar', user.picture || '');
+      }
+  }, [user, isAuthenticated]);
+
+  const handleLogin = () => {
+    loginWithPopup();
+   
   };
 
   const handleLogout = () => {
@@ -69,7 +78,7 @@ const LayoutPage: React.FC = () => {
       )}
       </div>
       <div className='h-full flex items-center justify-center'>
-        {!isAuthenticated ? <TodoPage filterTerm={filterTerm}/> : <LandingPage />}
+        {isAuthenticated ? <TodoPage filterTerm={filterTerm}/> : <LandingPage />}
       </div>
       
     </div>
