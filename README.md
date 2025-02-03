@@ -61,10 +61,10 @@ Before you begin, ensure you have met the following requirements:
 
 3. Start the development server:
     ```sh
-    npm start
+    npm run dev
     ```
 
-4. Open your browser and navigate to `http://localhost:3000`.
+4. Open your browser and navigate to `http://localhost:5173`.
 
 ## Testing
 
