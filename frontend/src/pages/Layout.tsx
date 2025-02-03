@@ -25,7 +25,7 @@ import { useMutation } from 'react-query';
  */
 const createUser = async (newUser: { username: string}) => {
      
-  const response = await apiInstance.post(`/todos`, newUser);
+  const response = await apiInstance.post(`/users`, newUser);
   return response.data;
 };
 
@@ -35,11 +35,10 @@ const LayoutPage: React.FC = () => {
  const { user, isAuthenticated,loginWithPopup, logout } = useAuth0();
 
  const mutation = useMutation(createUser, {
-        onSuccess: (data: { authToken: string }) => {
+        onSuccess: (data: { token: string }) => {
           console.log({createTodo:data});
           
-            //sessionStorage.setItem('ownerId', data.id);
-            sessionStorage.setItem('token', data.authToken);
+            sessionStorage.setItem('token', data.token);
         },
     });
     
@@ -54,6 +53,7 @@ const LayoutPage: React.FC = () => {
   }, [user, isAuthenticated]);
 
   const handleLogin = () => {
+    sessionStorage.clear();
     loginWithPopup();
    
   };

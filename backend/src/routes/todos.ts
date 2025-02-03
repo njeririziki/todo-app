@@ -5,7 +5,7 @@ import { EnsureIsAunthenticated } from '../middleware/auth';
 
 const router = Router();
 // @ts-ignore/
-//router.use('/', EnsureIsAunthenticated);
+router.use('/', EnsureIsAunthenticated);
 router.post('/', TodoController.createTodo);
 router.get('/', TodoController.getTodo);
 router.put('/:id', TodoController.updateTodo);

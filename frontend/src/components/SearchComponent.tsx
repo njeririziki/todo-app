@@ -19,12 +19,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ setSearch }) => {
             setSearch(event.target.value);
         }
     };
-    
-
-    // const handleSearch = () => {
-    //     console.log('Searching for:', searchTerm);
-       
-    // };
+   
 
     return (
         <div className="flex items-center justify-center p-4">
@@ -34,21 +29,15 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ setSearch }) => {
                 placeholder="Search by title or description..."
                 value={searchTerm}
                 onChange={handleInputChange}
-                // onKeyDown={(event) => {
-                  
-                //     if (event.key === 'Enter') {
-                //         if((event.target as HTMLInputElement).value.length > 2){
-                //         handleSearch();
-                //         }
-                //     }
-                // }}
+                onBlur={() => {
+                    if (searchTerm === '') {
+                        console.log('Input has been cleared');
+                        setSearch(searchTerm);
+                    }
+                }}
+               
             />
-            {/* <div
-                className="ml-2 bg-blue-500 text-white rounded-lg p-2"
-                onClick={handleSearch}
-            >
-                Search
-            </div> */}
+          
         </div>
     );
 };

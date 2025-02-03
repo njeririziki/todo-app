@@ -21,12 +21,30 @@ class UserController {
                 }
             });
       
-           const token = jwt.sign({ authtoken }, process.env.JWT_SECRET as string, { expiresIn: '3h' });
+           const token = jwt.sign(authtoken , process.env.JWT_SECRET as string, { expiresIn: '3h' });
               
             res.status(201).json({ token });
         } catch (error) {
             console.log(error);
-            res.status(500).json({ message: 'Internal Server Error' });
+            try {
+                const { username} = req.body;
+                const user = await prisma.user.findMany({
+                    where: {
+                        email: username
+                    }
+                })
+                console.log({user});
+                const token = jwt.sign(user[0] , process.env.JWT_SECRET as string, { expiresIn: '3h' });
+              
+                res.status(201).json({ token });
+
+            } catch (error) {
+                console.log('not already signed up',error);
+                res.status(500).json({ message: 'Internal Server Error' });     
+            }
+          
+            
+            
         }
     }
 }

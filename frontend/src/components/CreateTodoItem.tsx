@@ -1,6 +1,7 @@
 import React, { useState,useEffect, useRef } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import apiInstance from '../utils/ApiInstance';
+import {jwtDecode} from 'jwt-decode';
 
 
 interface CreateTodoItemProps {
@@ -47,8 +48,10 @@ const CreateTodoItem: React.FC<CreateTodoItemProps>= ({status,close}) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const ownerId = 1//decode the token  for this
-        mutation.mutate({ title, description, deadline: deadline.toISOString(), status, ownerId });
+        const token = sessionStorage.getItem('token') as string;
+        const decodedToken: { id: number } = jwtDecode(token);
+
+        mutation.mutate({ title, description, deadline: deadline.toISOString(), status, ownerId: decodedToken.id });
         close();
     };
 
@@ -79,7 +82,6 @@ const CreateTodoItem: React.FC<CreateTodoItemProps>= ({status,close}) => {
                 <input
                     type="date"
                     id="deadline"
-                    // placeholder='dd-mm-yyyy'
                     value={deadline.toDateString()}
                     onChange={(e) => setDeadline(new Date(e.target.value))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

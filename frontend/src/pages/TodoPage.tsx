@@ -3,8 +3,8 @@ import { useQuery } from 'react-query';
 import StatusSection from '../components/StatusSection';
 import apiInstance from '../utils/ApiInstance';
 
-const fetchTodos = async ({ searching }: { searching: string }) => {
-    const response = await apiInstance.get(`/todos${searching && `?search=${searching}`} `);
+const fetchTodos = async ({ searching }: {  searching: string }) => {
+    const response = await apiInstance.get(`/todos/${searching && `?search=${searching}`} `);
 
     if (response.status !== 200) {
         throw new Error('Network response was not ok');
@@ -21,13 +21,16 @@ interface TodoPageProps {
 
 const TodoPage: React.FC<TodoPageProps> = ({ filterTerm }) => {
 
+  
     const { data: todos, error, isLoading } = useQuery<{  
           id: number; 
           title: string; 
           description: string,
           deadline:Date,
           status:string }[], 
-          Error>(['todos', filterTerm], ()=>fetchTodos({searching:filterTerm}));
+          Error>(['todos', filterTerm], ()=>fetchTodos({ searching:filterTerm}));
+
+         
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error fetching todos: {error?.message}</div>;
