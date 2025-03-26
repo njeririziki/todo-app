@@ -2,10 +2,10 @@ import React, { useState,useEffect, useRef } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import apiInstance from '../utils/ApiInstance';
 import {jwtDecode} from 'jwt-decode';
-
+import {Todo} from '../types'
 
 interface EditTodoItemProps {
-    
+    todo:Todo;
     status: string;
     close: () => void;
 }
@@ -18,7 +18,7 @@ const editTodo = async (newTodo: { title: string; description: string; deadline:
 
 
 
-const EditTodoItem: React.FC<EditTodoItemProps>= ({status,close}) => {
+const EditTodoItem: React.FC<EditTodoItemProps>= ({todo,status,close}) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [deadline, setDeadline] = useState('');
@@ -39,9 +39,11 @@ const EditTodoItem: React.FC<EditTodoItemProps>= ({status,close}) => {
     }, [close]);
 
     useEffect(() => {
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date(todo.deadline).toISOString().split('T')[0];
         setDeadline(today);
-      }, []);
+        setTitle(todo.title)
+        setDescription(todo.description)
+      }, [todo]);
 
    const queryClient = useQueryClient();
 

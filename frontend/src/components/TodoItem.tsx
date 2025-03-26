@@ -2,16 +2,10 @@ import React from "react";
 import { useMutation, useQueryClient } from "react-query";
 import apiInstance from "../utils/ApiInstance";
 import deleteIcon from "../assets/trash.svg";
-
+import { Todo } from "../types";
 const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 interface TodoItemProps {
-  todo: {
-    id: number;
-    title: string;
-    description: string;
-    deadline: Date;
-    status: string;
-  };
+  todo:Todo;
   // onToggle: (id: number) => void;
   // onDelete: (id: number) => void;
 }
