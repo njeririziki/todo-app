@@ -5,3 +5,12 @@ export interface Todo  {
     deadline: Date;
     status: string;
   }
+
+  export interface User {
+        id: number;
+        username: string;
+        email: string;
+        password: string;
+        todos: Todo[];
+        avatar: string;
+  }
